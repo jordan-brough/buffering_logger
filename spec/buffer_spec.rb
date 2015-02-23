@@ -40,6 +40,15 @@ describe BufferingLogger::Buffer do
         expect(dev_contents).to eq message
       end
     end
+
+    it 'does not error with incompatible encodings' do
+      expect {
+        buffer.buffered do
+          buffer.write '✓'
+          buffer.write '✓'.force_encoding('ASCII-8BIT')
+        end
+      }.to_not raise_error
+    end
   end
 
   describe '#close' do

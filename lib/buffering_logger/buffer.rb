@@ -5,7 +5,7 @@ module BufferingLogger
   class Buffer
     def initialize(logdev)
       @logdev = logdev
-      @buffer = []
+      @buffer = StringIO.new
     end
 
     # buffers during the block and then flushes.
@@ -20,14 +20,14 @@ module BufferingLogger
     end
 
     def write(msg)
-      @buffer << msg
+      @buffer.write(msg)
       flush if !@buffering
     end
 
     def flush
-      if @buffer.any?
-        @logdev.write @buffer.join
-        @buffer.clear
+      if @buffer.length > 0
+        @logdev.write @buffer.string
+        @buffer = StringIO.new
       end
     end
 
