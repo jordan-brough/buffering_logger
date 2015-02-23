@@ -7,9 +7,9 @@ describe BufferingLogger::Logger do
   let(:dev) { StringIO.new }
   let(:message) { 'some message' }
 
-  def dev_contents(dev=dev)
-    dev.rewind
-    dev.read
+  def dev_contents(device=dev)
+    device.rewind
+    device.read
   end
 
   describe 'writing logs' do
