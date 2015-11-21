@@ -8,5 +8,5 @@ group :test do
 end
 
 group :test, :development do
-  gem 'byebug'
+  gem 'byebug', '>= 8.2.0'
 end
