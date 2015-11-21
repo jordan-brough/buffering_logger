@@ -11,12 +11,11 @@ module BufferingLogger
     # buffers during the block and then flushes.
     # returns the value of the block.
     def buffered
-      buffering_was = @buffering # in case we're already buffering
       @buffering = true
       yield
     ensure
-      @buffering = buffering_was
-      flush if !@buffering
+      @buffering = false
+      flush
     end
 
     def write(msg)
