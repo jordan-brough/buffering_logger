@@ -1,6 +1,6 @@
 # Buffer is used to wrap the logger's logdev to accomplish buffering.
 # For the purposes of the Logger class a LogDevice only needs to implement
-# #write and #close. We add #buffer and #flush as well.
+# #write and #close. We add #buffered and #flush as well.
 module BufferingLogger
   class Buffer
     def initialize(logdev)
