@@ -1,5 +1,7 @@
 # v2.0.0 (unreleased)
 
+*   BufferingLogger is now thread-safe.
+
 *   Remove nested buffering support.
 
     This added complexity and shouldn't really be needed.

@@ -109,5 +109,35 @@ be updated in place, rather than being replaced with a new logger.
 
 ## Threads
 
-All threads in a process share the same log buffer. For some applications this
-makes sense. For others it doesn't. Use accordingly.
+Buffering logger is thread-safe. Every thread gets its own separated storage and
+flushing for the messages sent by that thread.
+
+E.g. in this code:
+
+```ruby
+logger = BufferingLogger::Logger.new($stdout)
+Thread.new { logger.buffered { ... } }
+Thread.new { logger.buffered { ... } }
+```
+
+the logs for each thread will be grouped together and atomically flushed to the
+underlying log device.
+
+And in this code:
+
+```ruby
+logger = BufferingLogger::Logger.new($stdout)
+logger.buffered do
+  ...
+  t1 = Thread.new do
+    logger.buffered do
+      ...
+    end
+  end
+  t1.join
+  ...
+end
+```
+
+the messages for the nested thread will be buffered separately from the main
+thread's messages and will be flushed before the main thread's logs are flushed.

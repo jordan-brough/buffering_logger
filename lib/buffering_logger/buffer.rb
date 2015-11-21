@@ -5,7 +5,7 @@ module BufferingLogger
   class Buffer
     def initialize(logdev)
       @logdev = logdev
-      @buffer = StringIO.new
+      @mutex = Mutex.new
     end
 
     # buffers during the block and then flushes.
@@ -19,20 +19,47 @@ module BufferingLogger
     end
 
     def write(msg)
-      @buffer.write(msg)
-      flush if !@buffering
+      if @buffering
+        (buffer || create_buffer).write(msg)
+      else
+        @logdev.write(msg)
+      end
     end
 
     def flush
-      if @buffer.length > 0
-        @logdev.write @buffer.string
-        @buffer = StringIO.new
+      if buffer && buffer.length > 0
+        @mutex.synchronize do
+          @logdev.write buffer.string
+        end
       end
+    ensure
+      unset_buffer if buffer
     end
 
     def close
       flush
-      @logdev.close
+      @mutex.synchronize do
+        @logdev.close
+      end
     end
+
+    private
+
+    def buffer
+      Thread.current[buffer_id]
+    end
+
+    def create_buffer
+      Thread.current[buffer_id] = StringIO.new
+    end
+
+    def unset_buffer
+      Thread.current[buffer_id] = nil
+    end
+
+    def buffer_id
+      "buffering_logger_#{object_id}_buffer"
+    end
+
   end
 end
