@@ -35,6 +35,22 @@ describe BufferingLogger::RackBuffer do
     expect(dev_contents).to eq message
   end
 
+  context 'with a transform' do
+    let(:transform) do
+      ->(msg) { "hello #{msg} goodbye" }
+    end
+
+    let(:middleware) do
+      BufferingLogger::RackBuffer.new(app, logger, transform: transform)
+    end
+
+    it 'transforms the message' do
+      code, env = middleware.call env_for('http://example.com')
+      expect(code).to eq 200
+      expect(dev_contents).to eq "hello #{message} goodbye"
+    end
+  end
+
   context 'with an exception' do
     let(:app) do
       lambda do |env|

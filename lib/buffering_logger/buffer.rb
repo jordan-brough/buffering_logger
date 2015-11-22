@@ -10,12 +10,12 @@ module BufferingLogger
 
     # buffers during the block and then flushes.
     # returns the value of the block.
-    def buffered
+    def buffered(transform: nil)
       @buffering = true
       yield
     ensure
       @buffering = false
-      flush
+      flush(transform: transform)
     end
 
     def write(msg)

@@ -44,6 +44,26 @@ to disk at once when the `buffered` block exits.
 Outside of a `buffered` block BufferingLogger behaves like a non-buffered
 logger.
 
+### Log transforms
+
+If you'd like to transform the buffer before flushing it you can supply a
+'transform'. E.g.:
+
+```ruby
+logger.buffered(transform: MyTransform.new) { ... }
+```
+
+A transform should be an object that responds to `call(String)` and returns a
+String. See BufferingLogger::SingleLineTransform as an example.
+
+For Rails a request-log transform can be supplied when installing the Railtie:
+
+```ruby
+require 'buffering_logger/railtie'
+require 'buffering_logger/single_line_transform'
+BufferingLogger::Railtie.install(transform: BufferingLogger::SingleLineTransform.new)
+```
+
 ## Rails & Rack
 
 BufferingLogger provides a Rack middleware (`BufferingLogger::RackBuffer`) that

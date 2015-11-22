@@ -29,6 +29,19 @@ describe BufferingLogger::Logger do
         expect(dev_contents).to eq message
       end
 
+      context 'with a transform' do
+        let(:transform) do
+          ->(msg) { "hello #{msg} goodbye" }
+        end
+
+        it 'applies the transform' do
+          logger.buffered(transform: transform) do
+            logger << 'jordan brough'
+          end
+          expect(dev_contents).to eq 'hello jordan brough goodbye'
+        end
+      end
+
       context 'with multithreaded logging' do
         before do
           # format the log with just the message plus a newline

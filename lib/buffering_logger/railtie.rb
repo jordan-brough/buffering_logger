@@ -4,7 +4,7 @@ require 'rails/railtie'
 
 module BufferingLogger
   class Railtie < Rails::Railtie
-    def self.install
+    def self.install(transform: transform)
       initializer :buffering_logger, :before => :initialize_logger do |app|
 
         # Does mostly the same things that Rails does. See http://git.io/2v9FxQ
@@ -27,7 +27,7 @@ module BufferingLogger
 
         # Inserts at the very beginning so that all logs, even from other
         # middleware, get buffered together.
-        app.config.middleware.insert(0, BufferingLogger::RackBuffer, logger)
+        app.config.middleware.insert(0, BufferingLogger::RackBuffer, logger, transform: transform)
       end
     end
   end

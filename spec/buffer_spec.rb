@@ -28,6 +28,19 @@ describe BufferingLogger::Buffer do
         end
         expect(dev_contents).to eq message
       end
+
+      context 'with a transform' do
+        let(:transform) do
+          ->(msg) { "hello #{msg} goodbye" }
+        end
+
+        it 'applies the transform' do
+          buffer.buffered(transform: transform) do
+            buffer.write 'jordan brough'
+          end
+          expect(dev_contents).to eq 'hello jordan brough goodbye'
+        end
+      end
     end
   end
 

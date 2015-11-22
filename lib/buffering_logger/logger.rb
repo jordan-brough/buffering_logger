@@ -22,8 +22,8 @@ module BufferingLogger
       )
     end
 
-    def buffered
-      @logdev.buffered do
+    def buffered(transform: nil)
+      @logdev.buffered(transform: transform) do
         yield
       end
     end
