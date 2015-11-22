@@ -31,17 +31,8 @@ describe BufferingLogger::Buffer do
     end
   end
 
-  describe '#flush' do
-    it 'flushes the log even during buffering' do
-      buffer.buffered do
-        buffer.write message
-        expect(dev_contents).to eq ''
-        buffer.flush
-        expect(dev_contents).to eq message
-      end
-    end
-
-    it 'does not error with incompatible encodings' do
+  describe 'merging incompatible encodings' do
+    it 'does not generate an error' do
       expect {
         buffer.buffered do
           buffer.write '✓'
@@ -52,15 +43,6 @@ describe BufferingLogger::Buffer do
   end
 
   describe '#close' do
-    it 'flushes before closing' do
-      buffer.buffered do
-        buffer.write message
-        expect(buffer).to receive(:flush).and_call_original # from #close
-        buffer.close
-        expect(buffer).to receive(:flush).and_call_original # after buffered
-      end
-    end
-
     it 'can be called multiple times' do
       expect {
         buffer.close

@@ -1,6 +1,6 @@
 # Buffer is used to wrap the logger's logdev to accomplish buffering.
 # For the purposes of the Logger class a LogDevice only needs to implement
-# #write and #close. We add #buffered and #flush as well.
+# #write and #close. We add #buffered as well.
 module BufferingLogger
   class Buffer
     def initialize(logdev)
@@ -26,24 +26,25 @@ module BufferingLogger
       end
     end
 
-    def flush
-      if buffer && buffer.length > 0
-        @mutex.synchronize do
-          @logdev.write buffer.string
-        end
-      end
-    ensure
-      unset_buffer if buffer
-    end
-
     def close
-      flush
       @mutex.synchronize do
         @logdev.close
       end
     end
 
     private
+
+    def flush(transform: nil)
+      if buffer && buffer.length > 0
+        @mutex.synchronize do
+          msg = buffer.string
+          msg = transform.call(msg) if transform
+          @logdev.write(msg)
+        end
+      end
+    ensure
+      unset_buffer if buffer
+    end
 
     def buffer
       Thread.current[buffer_id]
