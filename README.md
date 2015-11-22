@@ -17,7 +17,8 @@ Add
 
 to your application's Gemfile. For Rails applications add:
 
-    require 'buffering_logger/rails'
+    require 'buffering_logger/railtie'
+    BufferingLogger::Railtie.install
 
 in `config/application.rb` *after* `require 'rails/all'`. This configures your
 application to use BufferingLogger and inserts a middleware that buffers and

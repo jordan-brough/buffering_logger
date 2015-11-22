@@ -1,5 +1,8 @@
 # v2.0.0 (unreleased)
 
+*   'buffering_logger/rails' has been deprecated.  Instead, require
+    'buffering_logger/railtie' and call 'BufferingLogger::Railtie.install'.
+
 *   BufferingLogger is now thread-safe.
 
 *   Remove nested buffering support.
