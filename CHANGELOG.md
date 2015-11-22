@@ -1,5 +1,7 @@
 # v2.0.0 (unreleased)
 
+*   BufferingLogger::Railtie now allows supplying a custom log device.
+
 *   Log transforms. You can now supply transforms to modify the buffered
     contents before flushing them to the log device.
 
