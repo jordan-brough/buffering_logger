@@ -13,12 +13,16 @@ to more reliably group multiline logs as single events.
 
 Add
 
-    gem 'buffering_logger'
+```ruby
+gem 'buffering_logger'
+```
 
 to your application's Gemfile. For Rails applications add:
 
-    require 'buffering_logger/railtie'
-    BufferingLogger::Railtie.install
+```ruby
+require 'buffering_logger/railtie'
+BufferingLogger::Railtie.install
+```
 
 in `config/application.rb` *after* `require 'rails/all'`. This configures your
 application to use BufferingLogger and inserts a middleware that buffers and
@@ -34,9 +38,11 @@ manually.
 For other uses, such as cron jobs, surround the relevant code that should be
 buffered with a called to `buffered`:
 
-    logger.buffered do
-      ...code...
-    end
+```ruby
+logger.buffered do
+  ...code...
+end
+```
 
 Inside of the `buffered` block log lines will be queued up and then all written
 to disk at once when the `buffered` block exits.
@@ -80,11 +86,13 @@ E.g. this set of lines:
 will all be written to the log device at the same time.  The middleware works
 like this:
 
-    def call(env)
-      logger.buffered do
-        @app.call(env)
-      end
-    end
+```ruby
+def call(env)
+  logger.buffered do
+    @app.call(env)
+  end
+end
+```
 
 ## How BufferingLogger helps log tools
 
