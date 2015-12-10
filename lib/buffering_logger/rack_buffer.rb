@@ -1,6 +1,6 @@
 module BufferingLogger
   class RackBuffer
-    def initialize(app, logger, transform: transform)
+    def initialize(app, logger, transform: nil)
       @app, @logger, @transform = app, logger, transform
     end
 
