@@ -1,8 +1,8 @@
 Gem::Specification.new do |s|
   s.name        = 'buffering_logger'
-  s.version     = '2.0.0'
+  s.version     = '2.0.1'
   s.required_ruby_version = ">= 2.1.0"
-  s.date        = '2015-11-23'
+  s.date        = '2016-02-04'
   s.summary     = 'BufferingLogger is a logger that buffers log entries and then writes them all at once.'
   s.description = 'Buffering makes it possible for log tools like Splunk or Logstash to more reliably group multiline logs as single events.'
   s.authors     = ['Jordan Brough']
