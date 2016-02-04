@@ -4,7 +4,7 @@ require 'rails/railtie'
 
 module BufferingLogger
   class Railtie < Rails::Railtie
-    def self.install(transform: transform, device: nil, sync: true)
+    def self.install(transform: nil, device: nil, sync: true)
       initializer :buffering_logger, :before => :initialize_logger do |app|
         device ||= begin
           # Does mostly the same things that Rails does. See http://git.io/2v9FxQ
