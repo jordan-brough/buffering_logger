@@ -1,9 +1,9 @@
 require 'stringio'
+require 'tempfile'
 
 describe BufferingLogger::Logger do
-  let(:logger) { BufferingLogger::Logger.new(*args) }
+  let(:logger) { BufferingLogger::Logger.new(dev) }
 
-  let(:args) { [dev] }
   let(:dev) { StringIO.new }
   let(:message) { 'some message' }
 
@@ -105,6 +105,9 @@ describe BufferingLogger::Logger do
   end
 
   describe '#logdev=' do
+    let(:logger) { BufferingLogger::Logger.new(dev_arg) }
+    let(:dev_arg) { StringIO.new }
+    let!(:old_dev) { logger.instance_variable_get(:@logdev).instance_variable_get(:@logdev).dev }
     let(:new_dev) { StringIO.new }
 
     it 'changes the logdev in place' do
@@ -113,9 +116,33 @@ describe BufferingLogger::Logger do
       expect(dev_contents(new_dev)).to eq message
     end
 
-    it 'closes the previous logdev' do
-      logger.logdev = new_dev
-      expect(dev).to be_closed
+    context 'when it opened the previous logdev' do
+      let(:dev_arg) { Tempfile.new('log').path }
+
+      it 'closes the previous logdev' do
+        logger.logdev = new_dev
+        expect(old_dev).to be_closed
+      end
+    end
+
+    context 'when it did not open the previous logdev' do
+      let(:dev_arg) { StringIO.new }
+
+      it 'does not close the previous logdev' do
+        logger.logdev = new_dev
+        expect(old_dev).to_not be_closed
+      end
+    end
+
+    context 'when using stdout' do
+      let(:dev_arg) { $stdout }
+
+      it 'does not blow up' do
+        expect {
+          logger.logdev = new_dev
+        }.to_not raise_error
+        expect(old_dev).to_not be_closed
+      end
     end
   end
 
