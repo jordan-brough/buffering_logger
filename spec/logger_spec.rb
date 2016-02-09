@@ -107,7 +107,7 @@ describe BufferingLogger::Logger do
   describe '#logdev=' do
     let(:logger) { BufferingLogger::Logger.new(dev_arg) }
     let(:dev_arg) { StringIO.new }
-    let!(:old_dev) { logger.instance_variable_get(:@logdev).instance_variable_get(:@logdev).dev }
+    let!(:old_dev) { logger.raw_log_device.dev }
     let(:new_dev) { StringIO.new }
 
     it 'changes the logdev in place' do
@@ -142,6 +142,20 @@ describe BufferingLogger::Logger do
           logger.logdev = new_dev
         }.to_not raise_error
         expect(old_dev).to_not be_closed
+      end
+    end
+
+    context 'when switching multiple times' do
+      specify do
+        logger = BufferingLogger::Logger.new(Tempfile.new('log').path)
+
+        old_dev = logger.raw_log_device.dev
+        logger.logdev = StringIO.new
+        expect(old_dev).to be_closed
+
+        old_dev_2 = logger.raw_log_device.dev
+        logger.logdev = StringIO.new
+        expect(old_dev_2).to_not be_closed
       end
     end
   end

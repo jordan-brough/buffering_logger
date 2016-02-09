@@ -7,6 +7,8 @@ require 'logger'
 module BufferingLogger
   class Logger < ::Logger
 
+    attr_reader :raw_log_device
+
     def initialize(logdev, shift_age: 0, shift_size: 1048576)
       @shift_age, @shift_size = shift_age, shift_size
       @opened_logdev = false
@@ -19,14 +21,12 @@ module BufferingLogger
     def logdev=(logdev)
       @logdev.close if @logdev && @opened_logdev
 
-      raw_log_device = LogDevice.new(logdev, shift_age: @shift_age, shift_size: @shift_size)
+      @raw_log_device = LogDevice.new(logdev, shift_age: @shift_age, shift_size: @shift_size)
 
       # if we opened the logdev then we should close it when we're done
-      if raw_log_device.dev != logdev
-        @opened_logdev = true
-      end
+      @opened_logdev = @raw_log_device.dev != logdev
 
-      @logdev = Buffer.new(raw_log_device)
+      @logdev = Buffer.new(@raw_log_device)
     end
 
     def buffered(transform: nil)
