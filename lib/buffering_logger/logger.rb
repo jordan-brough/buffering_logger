@@ -7,6 +7,7 @@ require 'logger'
 module BufferingLogger
   class Logger < ::Logger
 
+    attr_accessor :default_transform
     attr_reader :raw_log_device
 
     def initialize(logdev, shift_age: 0, shift_size: 1048576)
@@ -29,7 +30,7 @@ module BufferingLogger
       @logdev = Buffer.new(@raw_log_device)
     end
 
-    def buffered(transform: nil)
+    def buffered(transform: default_transform)
       @logdev.buffered(transform: transform) do
         yield
       end

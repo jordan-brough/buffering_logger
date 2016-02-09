@@ -70,6 +70,12 @@ require 'buffering_logger/single_line_transform'
 BufferingLogger::Railtie.install(transform: BufferingLogger::SingleLineTransform.new)
 ```
 
+You can also set a `default_transform` on a logger:
+
+```ruby
+logger.default_transform = ->(msg) { "transformed #{msg}" }
+```
+
 ## Rails & Rack
 
 BufferingLogger provides a Rack middleware (`BufferingLogger::RackBuffer`) that

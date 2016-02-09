@@ -20,6 +20,31 @@ describe BufferingLogger::Logger do
       end
     end
 
+    context 'with a default transform' do
+      let(:default_transform) do
+        ->(msg) { "hello #{msg} goodbye" }
+      end
+
+      before do
+        logger.default_transform = default_transform
+      end
+
+      it 'applies the transform by default' do
+        logger.buffered do
+          logger << 'jordan brough'
+        end
+        expect(dev_contents).to eq 'hello jordan brough goodbye'
+      end
+
+      it 'uses an override transform when present' do
+        override_transform = ->(msg) { "override #{msg} transform"}
+        logger.buffered(transform: override_transform) do
+          logger << 'jordan brough'
+        end
+        expect(dev_contents).to eq 'override jordan brough transform'
+      end
+    end
+
     context 'with buffering' do
       it 'writes the message after buffering' do
         logger.buffered do
