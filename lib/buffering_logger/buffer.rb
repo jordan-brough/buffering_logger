@@ -36,9 +36,9 @@ module BufferingLogger
 
     def flush(transform: nil)
       if buffer && buffer.length > 0
+        msg = buffer.string
+        msg = transform.call(msg) if transform
         @mutex.synchronize do
-          msg = buffer.string
-          msg = transform.call(msg) if transform
           @logdev.write(msg)
         end
       end
