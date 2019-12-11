@@ -1,4 +1,24 @@
-# v2.0.0 (unreleased)
+# v2.0.5 (unreleased)
+
+* Add a `default_transform` property
+
+# v2.0.4
+
+*   Fix for multiple sequential logdev switches
+
+# v2.0.3
+
+*   Only close logdevs that we opened
+
+# v2.0.2
+
+*   No functionality updates
+
+# v2.0.1
+
+*   No functionality updates
+
+# v2.0.0
 
 *   BufferingLogger::Railtie now allows supplying a custom log device.
 
