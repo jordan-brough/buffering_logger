@@ -1,5 +1,17 @@
 # v3.0.0 (unreleased)
 
+*   Fix threaded buffering status
+
+    Previously the `buffering` status was being set as an instance variable,
+    which meant that even though threaded buffers were separate, threaded usage
+    could change the `buffering` status for a different thread.
+
+    For threaded web servers this meant that logs were not lost but they also
+    were not buffered properly.
+
+    For manual threads inside of a single request (e.g. using `Thread.new`) this
+    could cause logs to be lost.
+
 # v2.0.6
 
 *   Improve mutex handling
