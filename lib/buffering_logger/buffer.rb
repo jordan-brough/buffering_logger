@@ -11,15 +11,15 @@ class BufferingLogger::Buffer
   # buffers during the block and then flushes.
   # returns the value of the block.
   def buffered(transform: nil)
-    @buffering = true
+    self.buffering = true
     yield
   ensure
-    @buffering = false
+    self.buffering = false
     flush(transform: transform)
   end
 
   def write(msg)
-    if @buffering
+    if buffering
       buffer.write(msg)
     else
       logdev_write(msg)
@@ -60,6 +60,18 @@ class BufferingLogger::Buffer
 
   def buffer_id
     "buffering_logger_#{object_id}_buffer"
+  end
+
+  def buffering
+    Thread.current[buffering_id]
+  end
+
+  def buffering=(val)
+    Thread.current[buffering_id] = val
+  end
+
+  def buffering_id
+    "buffering_logger_#{object_id}_is_buffering"
   end
 
 end

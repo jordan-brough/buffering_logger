@@ -67,13 +67,13 @@ describe BufferingLogger::Logger do
         end
       end
 
-      context 'with multithreaded logging' do
+      context 'with separate buffered multithreaded logging' do
         before do
           # format the log with just the message plus a newline
           logger.formatter = ->(_, _, _, msg) { "#{msg}\n" }
         end
 
-        it 'uses separate buffers for each thread' do
+        it 'uses separate buffers and buffering status for each thread' do
           thread1_queue = Queue.new
           thread2_queue = Queue.new
 
@@ -126,6 +126,107 @@ describe BufferingLogger::Logger do
           expect(dev_contents).to eq(expected_grouping)
         end
       end
+
+      context 'with nested buffered multithreaded logging' do
+        before do
+          # format the log with just the message plus a newline
+          logger.formatter = ->(_, _, _, msg) { "#{msg}\n" }
+        end
+
+        it 'uses separate buffers and buffering status for each thread' do
+          thread1_queue = Queue.new
+          thread2_queue = Queue.new
+
+          thread2 = nil
+          thread1 = Thread.new do
+            # thread 2 code, nested inside of thread1
+            thread2 = Thread.new do
+              logger.buffered do
+                thread2_queue << 'started'
+                thread1_queue.shift == 'started' || raise
+
+                thread1_queue.shift == 'sent 1' || raise
+
+                logger.info 'thread2 message 1'
+              end
+              thread2_queue << 'finished 2'
+            end
+
+            # thread 1 code
+            logger.buffered do
+              thread1_queue << 'started'
+              thread2_queue.shift == 'started' || raise
+
+              logger.info 'thread1 message 1'
+              thread1_queue << 'sent 1'
+
+              thread2_queue.shift == 'finished 2' || raise
+              logger.info 'thread1 message 2'
+            end
+          end
+
+          thread1.join
+          thread2.join
+
+          expected_grouping = <<-LOG.gsub(/^\s*/, '')
+            thread2 message 1
+            thread1 message 1
+            thread1 message 2
+          LOG
+
+          expect(dev_contents).to eq(expected_grouping)
+        end
+      end
+
+      context 'with nested buffered + non-buffered multithreaded logging' do
+        before do
+          # format the log with just the message plus a newline
+          logger.formatter = ->(_, _, _, msg) { "#{msg}\n" }
+        end
+
+        it 'uses separate buffers and buffering status for each thread' do
+          thread1_queue = Queue.new
+          thread2_queue = Queue.new
+
+          thread2 = nil
+          thread1 = Thread.new do
+            # thread 2 code, nested inside of thread1
+            thread2 = Thread.new do
+              thread2_queue << 'started'
+              thread1_queue.shift == 'started' || raise
+
+              thread1_queue.shift == 'sent 1' || raise
+
+              logger.info 'thread2 message 1'
+              thread2_queue << 'finished 2'
+            end
+
+            # thread 1 code
+            logger.buffered do
+              thread1_queue << 'started'
+              thread2_queue.shift == 'started' || raise
+
+              logger.info 'thread1 message 1'
+              thread1_queue << 'sent 1'
+
+              thread2_queue.shift == 'finished 2' || raise
+              logger.info 'thread1 message 2'
+            end
+          end
+
+          thread1.join
+          thread2.join
+
+          expected_grouping = <<-LOG.gsub(/^\s*/, '')
+            thread2 message 1
+            thread1 message 1
+            thread1 message 2
+          LOG
+
+          expect(dev_contents).to eq(expected_grouping)
+        end
+      end
+
     end
   end
 
