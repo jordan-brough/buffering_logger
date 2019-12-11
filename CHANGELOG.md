@@ -1,8 +1,10 @@
-# v2.0.5 (unreleased)
+# v2.0.6
 
-* Improve mutex handling
+*   Improve mutex handling
 
-* Add a `default_transform` property
+# v2.0.5
+
+*   Add a `default_transform` property
 
 # v2.0.4
 
