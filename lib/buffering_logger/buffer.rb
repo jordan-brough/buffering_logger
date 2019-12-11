@@ -22,14 +22,12 @@ module BufferingLogger
       if @buffering
         (buffer || create_buffer).write(msg)
       else
-        @logdev.write(msg)
+        logdev_write(msg)
       end
     end
 
     def close
-      @mutex.synchronize do
-        @logdev.close
-      end
+      logdev_close
     end
 
     private
@@ -38,12 +36,22 @@ module BufferingLogger
       if buffer && buffer.length > 0
         msg = buffer.string
         msg = transform.call(msg) if transform
-        @mutex.synchronize do
-          @logdev.write(msg)
-        end
+        logdev_write(msg)
       end
     ensure
       unset_buffer if buffer
+    end
+
+    def logdev_write(msg)
+      @mutex.synchronize do
+        @logdev.write(msg)
+      end
+    end
+
+    def logdev_close
+      @mutex.synchronize do
+        @logdev.close
+      end
     end
 
     def buffer
