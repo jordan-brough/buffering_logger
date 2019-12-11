@@ -20,7 +20,7 @@ module BufferingLogger
 
     def write(msg)
       if @buffering
-        (buffer || create_buffer).write(msg)
+        buffer.write(msg)
       else
         logdev_write(msg)
       end
@@ -39,7 +39,7 @@ module BufferingLogger
         logdev_write(msg)
       end
     ensure
-      unset_buffer if buffer
+      buffer.reopen('')
     end
 
     def logdev_write(msg)
@@ -55,15 +55,7 @@ module BufferingLogger
     end
 
     def buffer
-      Thread.current[buffer_id]
-    end
-
-    def create_buffer
-      Thread.current[buffer_id] = StringIO.new
-    end
-
-    def unset_buffer
-      Thread.current[buffer_id] = nil
+      Thread.current[buffer_id] ||= StringIO.new
     end
 
     def buffer_id
