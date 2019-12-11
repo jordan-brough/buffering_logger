@@ -1,3 +1,5 @@
+# v3.0.0 (unreleased)
+
 # v2.0.6
 
 *   Improve mutex handling
