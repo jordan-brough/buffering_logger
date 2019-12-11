@@ -17,16 +17,23 @@ Add
 gem 'buffering_logger'
 ```
 
-to your application's Gemfile. For Rails applications add:
+to your application's Gemfile. For Rails applications add the following two
+lines in `config/application.rb`:
 
 ```ruby
-require 'buffering_logger/railtie'
-BufferingLogger::Railtie.install
+require 'rails/all'
+require 'buffering_logger/railtie' # THIS LINE
+
+…
+
+module YourApp
+  class Application < Rails::Application
+    …
+    BufferingLogger::Railtie.install # AND THIS LINE
 ```
 
-in `config/application.rb` *after* `require 'rails/all'`. This configures your
-application to use BufferingLogger and inserts a middleware that buffers and
-flushes logs for each request.
+This configures your application to use BufferingLogger and inserts a middleware
+that buffers and flushes logs for each request.
 
 ## Usage
 
