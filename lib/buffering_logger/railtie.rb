@@ -7,7 +7,7 @@ class BufferingLogger::Railtie < Rails::Railtie
 
   def self.install(
     transform: nil, device: nil, sync: true, request_id: true,
-    warn_log_tags: true
+    warn_log_tags: true, simple_formatter: true
   )
     initializer :buffering_logger, :before => :initialize_logger do |app|
       device ||= begin
@@ -27,7 +27,11 @@ class BufferingLogger::Railtie < Rails::Railtie
       device.sync = true if sync && device.respond_to?(:sync=)
 
       logger = BufferingLogger::Logger.new(device)
-      logger.formatter = app.config.log_formatter
+      logger.formatter = if simple_formatter
+        ActiveSupport::Logger::SimpleFormatter.new
+      else
+        app.config.log_formatter
+      end
       logger = ActiveSupport::TaggedLogging.new(logger)
 
       app.config.logger = logger

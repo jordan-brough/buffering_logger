@@ -1,5 +1,7 @@
 # v3.1.0 (unreleased)
 
+*   Default to using `ActiveSupport::Logger::SimpleFormatter`
+
 *   Log the request id by default and add docs about Rails log tags
 
 # v3.0.0

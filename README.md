@@ -140,6 +140,16 @@ BufferingLogger warns you if you've configured log tags together with
 BufferingLogger. To disable the warning you can pass `warn_log_tags: false` to
 `BufferingLogger::Railtie.install()`.
 
+## Log format
+
+By default BufferingLogger sets the log formatter as
+`ActiveSupport::Logger::SimpleFormatter`. With buffered logs you generally only
+need things like the process id and timestamp logged once instead of on every
+line. If you would like to disable this replacement you can pass
+`simple_formatter: false` to `BufferingLogger::Railtie.install()` and then
+BufferingLogger will use whatever formatter you've specified via
+`config.log_formatter` in your Rails config.
+
 ## How BufferingLogger helps log tools
 
 When a single "event" is composed of multiple log lines you want your log tools
