@@ -1,3 +1,7 @@
+# v3.1.0 (unreleased)
+
+*   Log the request id by default and add docs about Rails log tags
+
 # v3.0.0
 
 *   Fix threaded buffering status
