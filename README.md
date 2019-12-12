@@ -21,15 +21,11 @@ to your application's Gemfile. For Rails applications add the following two
 lines in `config/application.rb`:
 
 ```ruby
-require 'rails/all'
-require 'buffering_logger/railtie' # THIS LINE
-
-…
-
 module YourApp
   class Application < Rails::Application
     …
-    BufferingLogger::Railtie.install # AND THIS LINE
+    require 'buffering_logger/railtie'
+    BufferingLogger::Railtie.install
 ```
 
 This configures your application to use BufferingLogger and inserts a middleware
