@@ -85,6 +85,8 @@ logger.default_transform = ->(msg) { "transformed #{msg}" }
 
 ## Rails & Rack
 
+### Buffering
+
 BufferingLogger provides a Rack middleware (`BufferingLogger::RackBuffer`) that
 buffers all the lines of a single Rails request log. (See installation
 instructions above.)
@@ -106,6 +108,37 @@ def call(env)
   end
 end
 ```
+
+### Request ID
+
+BufferingLogger also adds a Rack middleware by default that logs the request id
+(`BufferingLogger::RailsRackLogRequestId`).
+
+If desired, you can disable this behavior via:
+```ruby
+BufferingLogger::Railtie.install(request_id: false)
+```
+
+## Rails.application.config.log_tags and BufferingLogger
+
+With a buffering logger and a properly configured log tool, you don't need to
+log request-wide tags on every line. Instead you can log them once per request.
+This means you will probably want to disable this line in your
+`environments/*.rb`:
+```ruby
+# Disable this line in environments/*.rb:
+# config.log_tags = [ :request_id ]
+```
+
+The request_id in particular is logged automatically by BufferingLogger (see
+above).
+
+If you would like to log other request-wide items you can follow the Rack
+middleware pattern that `BufferingLogger::RailsRackLogRequestId` uses.
+
+BufferingLogger warns you if you've configured log tags together with
+BufferingLogger. To disable the warning you can pass `warn_log_tags: false` to
+`BufferingLogger::Railtie.install()`.
 
 ## How BufferingLogger helps log tools
 
