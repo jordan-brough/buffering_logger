@@ -32,7 +32,9 @@ class BufferingLogger::Railtie < Rails::Railtie
       # middleware, get buffered together.
       app.config.middleware.insert(
         0,
-        BufferingLogger::RackBuffer, logger, transform: transform,
+        BufferingLogger::RackBuffer,
+        logger,
+        transform: transform,
       )
     end
   end
