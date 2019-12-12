@@ -1,4 +1,4 @@
-# v3.1.0 (unreleased)
+# v3.1.0
 
 *   Default to using `ActiveSupport::Logger::SimpleFormatter`
 
