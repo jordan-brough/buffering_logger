@@ -1,6 +1,10 @@
+$:.push File.expand_path('lib', __dir__)
+
+require 'buffering_logger/version'
+
 Gem::Specification.new do |s|
   s.name        = 'buffering_logger'
-  s.version     = '3.1.0'
+  s.version     = BufferingLogger::VERSION
   s.required_ruby_version = ">= 2.1.0"
   s.date        = '2016-02-04'
   s.summary     = 'BufferingLogger is a logger that buffers log entries and then writes them all at once.'
