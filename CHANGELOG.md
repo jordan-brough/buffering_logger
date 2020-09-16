@@ -1,3 +1,7 @@
+# v3.1.1
+
+*   Include ActiveSupport::LoggerSilence if available
+
 # v3.1.0
 
 *   Default to using `ActiveSupport::Logger::SimpleFormatter`
