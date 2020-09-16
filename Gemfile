@@ -10,3 +10,5 @@ end
 group :test, :development do
   gem 'byebug', '>= 8.2.0'
 end
+
+gem 'gem-release'
