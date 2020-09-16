@@ -5,6 +5,7 @@ require 'logger'
 # Buffering is implemented by wrapping the logger @logdev object with a Buffer.
 
 class BufferingLogger::Logger < ::Logger
+  include ActiveSupport::LoggerSilence if defined?(ActiveSupport::LoggerSilence)
 
   attr_accessor :default_transform
   attr_reader :raw_log_device
